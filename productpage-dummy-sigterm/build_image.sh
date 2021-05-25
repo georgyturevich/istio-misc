@@ -1,0 +1,1 @@
+docker build -t georgyturevich/misc-istio-productpage-dummy-sigterm:v1 .

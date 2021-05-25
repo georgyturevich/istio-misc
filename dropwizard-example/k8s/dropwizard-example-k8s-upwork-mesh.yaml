@@ -1,0 +1,91 @@
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: dropwizard-example
+  namespace: upwork-services
+spec:
+  gateways:
+    - ingress-http
+  hosts:
+    - 'dropwizard-example.mesh.dev.agora.odesk.com'
+  http:
+    - match:
+        - gateways:
+            - ingress-http
+          port: 80
+      route:
+        - destination:
+            host: dropwizard-example
+            port:
+              number: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dropwizard-example
+  namespace: upwork-services
+  labels:
+    app: dropwizard-example
+    service: dropwizard-example
+spec:
+  ports:
+    - port: 8080
+      name: http
+  selector:
+    app: dropwizard-example
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dropwizard-example
+  labels:
+    app: dropwizard-example
+  namespace: upwork-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dropwizard-example
+  template:
+    metadata:
+      labels:
+        app: dropwizard-example
+    spec:
+      containers:
+        - name: dropwizard-example
+          image: georgyturevich/misc-istio-dropwizard-dummy-sigterm:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /hello-world
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 4
+            periodSeconds: 4
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /hello-world
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 4
+            periodSeconds: 4
+            successThreshold: 1
+            timeoutSeconds: 1
+          startupProbe:
+            failureThreshold: 10
+            httpGet:
+              path: /hello-world
+              port: 8080
+              scheme: HTTP
+            periodSeconds: 2
+            successThreshold: 1
+            timeoutSeconds: 1
+
+---

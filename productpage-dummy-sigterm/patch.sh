@@ -1,0 +1,1 @@
+kubectl patch deployment productpage-v1 --patch '{"spec": {"template": {"spec": {"containers": [{"name": "productpage","image": "georgyturevich/misc-istio-productpage-dummy-sigterm:v1"}]}}}}'

@@ -1,0 +1,79 @@
+---
+##################################################################################################
+# dropwizard-example services
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: dropwizard-example
+  labels:
+    app: dropwizard-example
+    service: dropwizard-example
+spec:
+  ports:
+    - port: 8080
+      name: http
+  selector:
+    app: dropwizard-example
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: bookinfo-dropwizard-example
+  labels:
+    account: dropwizard-example
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dropwizard-example
+  labels:
+    app: dropwizard-example
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dropwizard-example
+  template:
+    metadata:
+      labels:
+        app: dropwizard-example
+    spec:
+      serviceAccountName: bookinfo-dropwizard-example
+      containers:
+        - name: dropwizard-example
+          image: georgyturevich/misc-istio-dropwizard-dummy-sigterm:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /hello-world
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 4
+            periodSeconds: 4
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /hello-world
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 4
+            periodSeconds: 4
+            successThreshold: 1
+            timeoutSeconds: 1
+          startupProbe:
+            failureThreshold: 10
+            httpGet:
+              path: /hello-world
+              port: 8080
+              scheme: HTTP
+            periodSeconds: 2
+            successThreshold: 1
+            timeoutSeconds: 1
+
+---

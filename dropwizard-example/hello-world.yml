@@ -1,0 +1,16 @@
+template: Hello, %s!
+defaultName: Stranger
+
+logging:
+  level: TRACE
+  loggers:
+    com.example.helloworld: DEBUG
+
+server:
+  applicationConnectors:
+    - type: http
+      port: 8080
+      acceptQueueSize: 100
+      idleTimeout: 10s
+      soLingerTime: 10s
+      useServerHeader: "true"

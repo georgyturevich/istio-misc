@@ -1,0 +1,1 @@
+docker build -t georgyturevich/misc-istio-reviews-dummy-sigterm:v4 .
